@@ -1,0 +1,47 @@
+﻿<Window x:Class="LibraryManagement.BookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Добавление/редактирование книги" Height="400" Width="400"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Название:" Margin="5" VerticalAlignment="Center"/>
+        <TextBox x:Name="txtTitle" Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Автор:" Margin="5" VerticalAlignment="Center"/>
+        <ComboBox x:Name="cmbAuthor" Grid.Row="1" Grid.Column="1" Margin="5" 
+                  DisplayMemberPath="FullName" SelectedValuePath="Id"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Жанр:" Margin="5" VerticalAlignment="Center"/>
+        <ComboBox x:Name="cmbGenre" Grid.Row="2" Grid.Column="1" Margin="5" 
+                  DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Год издания:" Margin="5" VerticalAlignment="Center"/>
+        <TextBox x:Name="txtYear" Grid.Row="3" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="ISBN:" Margin="5" VerticalAlignment="Center"/>
+        <TextBox x:Name="txtIsbn" Grid.Row="4" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Количество:" Margin="5" VerticalAlignment="Center"/>
+        <TextBox x:Name="txtQuantity" Grid.Row="5" Grid.Column="1" Margin="5"/>
+
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button x:Name="btnSave" Content="Сохранить" Width="80" Margin="5" Click="btnSave_Click"/>
+            <Button x:Name="btnCancel" Content="Отмена" Width="80" Margin="5" Click="btnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

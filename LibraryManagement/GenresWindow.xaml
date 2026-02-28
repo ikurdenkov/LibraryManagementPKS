@@ -1,0 +1,28 @@
+﻿<Window x:Class="LibraryManagement.GenresWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Управление жанрами" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Список жанров" FontSize="16" FontWeight="Bold"/>
+
+        <DataGrid x:Name="dgGenres" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="btnAddGenre" Content="Добавить" Width="80" Margin="5" Click="btnAddGenre_Click"/>
+            <Button x:Name="btnEditGenre" Content="Изменить" Width="80" Margin="5" Click="btnEditGenre_Click"/>
+            <Button x:Name="btnDeleteGenre" Content="Удалить" Width="80" Margin="5" Click="btnDeleteGenre_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

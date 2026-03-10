@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using LibraryManagement.Models;
 
@@ -7,7 +8,6 @@ namespace LibraryManagement
     public partial class GenreEditWindow : Window
     {
         private int? _genreId;
-        private Genre _currentGenre;
 
         public GenreEditWindow(int? genreId = null)
         {
@@ -23,11 +23,11 @@ namespace LibraryManagement
         {
             using (var context = new LibraryContext())
             {
-                _currentGenre = context.Genres.Find(_genreId.Value);
-                if (_currentGenre != null)
+                var genre = context.Genres.Find(_genreId.Value);
+                if (genre != null)
                 {
-                    txtName.Text = _currentGenre.Name;
-                    txtDescription.Text = _currentGenre.Description;
+                    txtName.Text = genre.Name;
+                    txtDescription.Text = genre.Description;
                 }
             }
         }
@@ -42,6 +42,21 @@ namespace LibraryManagement
 
             using (var context = new LibraryContext())
             {
+                bool exists;
+                if (_genreId.HasValue)
+                {
+                    exists = context.Genres.Any(g => g.Name == txtName.Text.Trim() && g.Id != _genreId.Value);
+                }
+                else
+                {
+                    exists = context.Genres.Any(g => g.Name == txtName.Text.Trim());
+                }
+                if (exists)
+                {
+                    MessageBox.Show("Жанр с таким названием уже существует.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 Genre genre;
                 if (_genreId.HasValue)
                 {
@@ -56,7 +71,7 @@ namespace LibraryManagement
                 if (genre != null)
                 {
                     genre.Name = txtName.Text.Trim();
-                    genre.Description = txtDescription.Text?.Trim();
+                    genre.Description = txtDescription.Text?.Trim() ?? "";
 
                     context.SaveChanges();
                 }

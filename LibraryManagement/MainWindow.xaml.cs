@@ -13,15 +13,17 @@ namespace LibraryManagement
         public MainWindow()
         {
             InitializeComponent();
+
+            // Применяем миграции при запуске (если база не существует или не обновлена)
             using (var context = new LibraryContext())
             {
-                context.Database.Migrate(); // Применяет миграции, создаёт БД, если её нет
+                context.Database.Migrate();
             }
-            LoadFilters(); // Загружаем списки для фильтров
-            LoadBooks();    // Загружаем книги
+
+            LoadFilters();
+            LoadBooks();
         }
 
-        // Загрузка авторов и жанров в ComboBox фильтров
         private void LoadFilters()
         {
             using (var context = new LibraryContext())
@@ -38,54 +40,41 @@ namespace LibraryManagement
             }
         }
 
-        // Загрузка книг с учётом фильтров
         private void LoadBooks()
         {
             using (var context = new LibraryContext())
             {
-                // Базовый запрос с включением связанных данных
                 IQueryable<Book> query = context.Books
-                    .Include(b => b.Author)
-                    .Include(b => b.Genre);
+                    .Include(b => b.Authors)
+                    .Include(b => b.Genres);
 
-                // Фильтр по автору (если выбран не "Все")
                 if (cmbAuthorFilter.SelectedValue != null && (int)cmbAuthorFilter.SelectedValue != 0)
                 {
                     int authorId = (int)cmbAuthorFilter.SelectedValue;
-                    query = query.Where(b => b.AuthorId == authorId);
+                    query = query.Where(b => b.Authors.Any(a => a.Id == authorId));
                 }
 
-                // Фильтр по жанру
                 if (cmbGenreFilter.SelectedValue != null && (int)cmbGenreFilter.SelectedValue != 0)
                 {
                     int genreId = (int)cmbGenreFilter.SelectedValue;
-                    query = query.Where(b => b.GenreId == genreId);
+                    query = query.Where(b => b.Genres.Any(g => g.Id == genreId));
                 }
 
-                // Поиск по названию
                 if (!string.IsNullOrWhiteSpace(txtSearchTitle.Text))
                 {
                     string search = txtSearchTitle.Text;
                     query = query.Where(b => b.Title.Contains(search));
                 }
 
-                // Выполняем запрос и материализуем список
                 var books = query.ToList();
                 dgBooks.ItemsSource = books;
 
-                // Подсчёт общего количества книг в наличии
                 int totalQuantity = books.Sum(b => b.QuantityInStock);
                 txtTotalQuantity.Text = totalQuantity.ToString();
             }
         }
 
-        // Обработчик кнопки "Применить"
-        private void btnApplyFilter_Click(object sender, RoutedEventArgs e)
-        {
-            LoadBooks();
-        }
-
-        // Обработчик кнопки "Сброс"
+        private void btnApplyFilter_Click(object sender, RoutedEventArgs e) => LoadBooks();
         private void btnResetFilter_Click(object sender, RoutedEventArgs e)
         {
             cmbAuthorFilter.SelectedValue = 0;
@@ -94,19 +83,17 @@ namespace LibraryManagement
             LoadBooks();
         }
 
-        // Добавление книги
         private void btnAddBook_Click(object sender, RoutedEventArgs e)
         {
-            var window = new BookWindow(); // окно для добавления/редактирования (создадим позже)
+            var window = new BookWindow();
             window.Owner = this;
             if (window.ShowDialog() == true)
             {
-                LoadBooks(); // обновляем список после добавления
-                LoadFilters(); // возможно, появились новые авторы/жанры
+                LoadBooks();
+                LoadFilters();
             }
         }
 
-        // Редактирование книги
         private void btnEditBook_Click(object sender, RoutedEventArgs e)
         {
             if (dgBooks.SelectedItem is Book selectedBook)
@@ -124,7 +111,6 @@ namespace LibraryManagement
             }
         }
 
-        // Удаление книги
         private void btnDeleteBook_Click(object sender, RoutedEventArgs e)
         {
             if (dgBooks.SelectedItem is Book selectedBook)
@@ -147,7 +133,6 @@ namespace LibraryManagement
             }
         }
 
-        // Открыть окно управления авторами
         private void btnManageAuthors_Click(object sender, RoutedEventArgs e)
         {
             var window = new AuthorsWindow();
@@ -157,7 +142,6 @@ namespace LibraryManagement
             LoadBooks();
         }
 
-        // Открыть окно управления жанрами
         private void btnManageGenres_Click(object sender, RoutedEventArgs e)
         {
             var window = new GenresWindow();

@@ -17,6 +17,36 @@ namespace LibraryManagement.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
 
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BooksId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AuthorsId", "BooksId");
+
+                    b.HasIndex("BooksId");
+
+                    b.ToTable("BookAuthors", (string)null);
+                });
+
+            modelBuilder.Entity("BookGenre", b =>
+                {
+                    b.Property<int>("BooksId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GenresId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("BooksId", "GenresId");
+
+                    b.HasIndex("GenresId");
+
+                    b.ToTable("BookGenres", (string)null);
+                });
+
             modelBuilder.Entity("LibraryManagement.Models.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -52,12 +82,6 @@ namespace LibraryManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("GenreId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("ISBN")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -75,10 +99,6 @@ namespace LibraryManagement.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("GenreId");
 
                     b.ToTable("Books");
                 });
@@ -104,33 +124,34 @@ namespace LibraryManagement.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("LibraryManagement.Models.Book", b =>
+            modelBuilder.Entity("AuthorBook", b =>
                 {
-                    b.HasOne("LibraryManagement.Models.Author", "Author")
-                        .WithMany("Books")
-                        .HasForeignKey("AuthorId")
+                    b.HasOne("LibraryManagement.Models.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LibraryManagement.Models.Genre", "Genre")
-                        .WithMany("Books")
-                        .HasForeignKey("GenreId")
+                    b.HasOne("LibraryManagement.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookGenre", b =>
+                {
+                    b.HasOne("LibraryManagement.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
-
-                    b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.Author", b =>
-                {
-                    b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.Genre", b =>
-                {
-                    b.Navigation("Books");
+                    b.HasOne("LibraryManagement.Models.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

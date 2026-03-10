@@ -23,7 +23,7 @@ namespace LibraryManagement
 
         private void btnAddAuthor_Click(object sender, RoutedEventArgs e)
         {
-            var window = new AuthorEditWindow(); // окно редактирования автора
+            var window = new AuthorEditWindow();
             window.Owner = this;
             if (window.ShowDialog() == true)
                 LoadAuthors();
@@ -54,7 +54,6 @@ namespace LibraryManagement
                 {
                     using (var context = new LibraryContext())
                     {
-                        // При каскадном удалении связанные книги удалятся автоматически
                         context.Authors.Remove(selectedAuthor);
                         context.SaveChanges();
                     }

@@ -1,4 +1,7 @@
-﻿namespace LibraryManagement.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace LibraryManagement.Models
 {
     public class Book
     {
@@ -8,12 +11,13 @@
         public string ISBN { get; set; } = string.Empty;
         public int QuantityInStock { get; set; }
 
-        // Внешний ключ для автора
-        public int AuthorId { get; set; }
-        public Author Author { get; set; } // навигационное свойство
+        // Связь многие-ко-многим с авторами
+        public ICollection<Author> Authors { get; set; } = new List<Author>();
+        // Связь многие-ко-многим с жанрами
+        public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 
-        // Внешний ключ для жанра
-        public int GenreId { get; set; }
-        public Genre Genre { get; set; }   // навигационное свойство
+        // Свойства для отображения в DataGrid
+        public string AuthorsDisplay => Authors != null ? string.Join(", ", Authors.Select(a => a.FullName)) : "";
+        public string GenresDisplay => Genres != null ? string.Join(", ", Genres.Select(g => g.Name)) : "";
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using LibraryManagement.Models;
 
@@ -7,7 +8,6 @@ namespace LibraryManagement
     public partial class AuthorEditWindow : Window
     {
         private int? _authorId;
-        private Author _currentAuthor;
 
         public AuthorEditWindow(int? authorId = null)
         {
@@ -23,13 +23,13 @@ namespace LibraryManagement
         {
             using (var context = new LibraryContext())
             {
-                _currentAuthor = context.Authors.Find(_authorId.Value);
-                if (_currentAuthor != null)
+                var author = context.Authors.Find(_authorId.Value);
+                if (author != null)
                 {
-                    txtFirstName.Text = _currentAuthor.FirstName;
-                    txtLastName.Text = _currentAuthor.LastName;
-                    dpBirthDate.SelectedDate = _currentAuthor.BirthDate;
-                    txtCountry.Text = _currentAuthor.Country;
+                    txtFirstName.Text = author.FirstName;
+                    txtLastName.Text = author.LastName;
+                    dpBirthDate.SelectedDate = author.BirthDate;
+                    txtCountry.Text = author.Country;
                 }
             }
         }
@@ -49,6 +49,25 @@ namespace LibraryManagement
 
             using (var context = new LibraryContext())
             {
+                // Проверка уникальности (имя + фамилия)
+                bool exists;
+                if (_authorId.HasValue)
+                {
+                    exists = context.Authors.Any(a => a.FirstName == txtFirstName.Text.Trim()
+                                                   && a.LastName == txtLastName.Text.Trim()
+                                                   && a.Id != _authorId.Value);
+                }
+                else
+                {
+                    exists = context.Authors.Any(a => a.FirstName == txtFirstName.Text.Trim()
+                                                   && a.LastName == txtLastName.Text.Trim());
+                }
+                if (exists)
+                {
+                    MessageBox.Show("Автор с таким именем и фамилией уже существует.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 Author author;
                 if (_authorId.HasValue)
                 {
@@ -65,7 +84,7 @@ namespace LibraryManagement
                     author.FirstName = txtFirstName.Text.Trim();
                     author.LastName = txtLastName.Text.Trim();
                     author.BirthDate = dpBirthDate.SelectedDate.Value;
-                    author.Country = txtCountry.Text.Trim();
+                    author.Country = txtCountry.Text?.Trim() ?? "";
 
                     context.SaveChanges();
                 }
